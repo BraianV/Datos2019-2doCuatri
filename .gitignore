@@ -4,3 +4,10 @@
 
 #Archivos pesados
 /data/*.csv
+
+*.csv
+
+
+# Ignore los archivos pesados
+/TP2/data/train.csv
+/TP2/data/test.csv
