@@ -1,0 +1,1592 @@
+#https://raw.githubusercontent.com/bamine/Kaggle-stuff/master/otto/hyperopt_xgboost.py
+#https://www.kaggle.com/yassinealouini/hyperopt-the-xgboost-model
+import sys
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
+from hyperopt import hp
+from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+def score(params):
+    print("Training with params : ")
+    print(params)
+    num_round = int(params['n_estimators'])
+    del params['n_estimators']
+    dtrain = xgb.DMatrix(X_train, label=y_train)
+    dvalid = xgb.DMatrix(X_test, label=y_test)
+    # watchlist = [(dvalid, 'eval'), (dtrain, 'train')]
+    model = xgb.train(params, dtrain, num_round)
+    predictions = model.predict(dvalid)
+    score = sorting_score(y_test, predictions)
+    print("\tScore {0}\n\n".format(score))
+    return {'loss': score, 'status': STATUS_OK}
+def optimize(trials):
+    space = {
+             'n_estimators' : hp.quniform('n_estimators', 100, 1000, 1),
+             'eta' : hp.quniform('eta', 0.025, 0.5, 0.025),
+             'max_depth':  hp.choice('max_depth', np.arange(1, 14, dtype=int)),
+             'min_child_weight' : hp.quniform('min_child_weight', 1, 6, 1),
+             'subsample' : hp.quniform('subsample', 0.5, 1, 0.05),
+             'gamma' : hp.quniform('gamma', 0.5, 1, 0.05),
+             'colsample_bytree' : hp.quniform('colsample_bytree', 0.5, 1, 0.05),
+             'objective': 'reg:linear',
+             'nthread' : 12,
+             'silent' : 1
+             }
+    best = fmin(score, space, algo=tpe.suggest, trials=trials, max_evals=250)
+    print(best)
+print("Splitting data into train and valid ...\n\n")
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=1)
+#Trials object where the history of search will be stored
+trials = Trials()
+#surrounding code to write to file when printing
+orig_stdout = sys.stdout
+f = open('out_metasearch.txt', 'w')
+sys.stdout = f
+optimize(trials)
+sys.stdout = orig_stdout
+f.close()
+
+
+
+
+Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=1 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:34:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8, score=-389601.188, total= 3.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=1 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8, score=-383195.375, total= 3.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:36:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5, score=-389144.438, total= 4.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=1 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5, score=-383834.500, total= 4.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.8, score=-387543.500, total= 4.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=0.5, score=-391939.562, total= 4.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:38:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=1, score=-388408.500, total= 2.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=1, score=-381375.250, total= 3.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.8 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=100, subsample=1, score=-388204.938, total= 3.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:40:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.5, score=-351897.125, total= 9.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.8, score=-346924.188, total= 7.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:48:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.8, score=-352348.625, total=11.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.5, score=-355379.062, total=13.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.5, score=-355795.219, total=13.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=0.8, score=-351158.938, total=12.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:52:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=1, score=-347495.625, total= 6.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:54:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=1, score=-352487.938, total= 9.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 22:58:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=300, subsample=1, score=-350578.625, total= 9.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:00:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.5, score=-340033.938, total=17.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:08:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.8, score=-334929.188, total=15.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:10:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.5, score=-344523.531, total=19.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:12:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.5, score=-340882.438, total=22.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:14:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.8, score=-337244.688, total=19.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:16:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.5, score=-382739.875, total= 3.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:18:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.5, score=-387748.750, total= 3.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.8 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=0.8, score=-337635.625, total=20.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.5, score=-390108.125, total= 4.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=1, score=-337298.406, total=10.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:22:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=1, score=-332974.312, total=15.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.8, score=-379676.500, total= 2.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:24:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=1, score=-380427.625, total= 2.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.8, score=-390050.281, total= 4.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=1, n_estimators=500, subsample=1, score=-339173.188, total=17.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.5 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=0.8, score=-385526.312, total= 4.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.8 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=1, score=-388821.281, total= 2.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:26:38.511 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=100, subsample=1, score=-389185.562, total= 3.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:28:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.5, score=-349617.500, total= 9.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=1 
+[I 23:34:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.8, score=-351088.188, total= 7.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:36:38.512 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.8, score=-352327.625, total=11.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.8, score=-342772.266, total=12.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.5, score=-354384.188, total=13.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.5 
+[I 23:38:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=0.5, score=-355779.000, total=13.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:40:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=1, score=-346178.375, total= 6.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:42:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=1, score=-353161.531, total= 9.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:46:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=300, subsample=1, score=-349786.938, total=10.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 23:48:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.8, score=-333032.500, total=13.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.5, score=-341488.625, total=16.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=1 
+[I 23:54:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.5, score=-338099.625, total=22.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.5, score=-344256.156, total=22.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:02:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.8, score=-337566.656, total=20.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.5, score=-381741.375, total= 4.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=0.8, score=-336362.500, total=18.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:06:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=1, score=-330723.188, total=12.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=1, score=-336935.500, total=13.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.8 
+[I 00:08:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.5, score=-391270.562, total= 3.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.8, score=-380783.000, total= 2.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:10:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.5, score=-387133.844, total= 4.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.8, score=-388630.312, total= 4.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.5 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=1, score=-382730.625, total= 2.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=1, score=-385413.375, total= 2.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:12:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=0.8, score=-388448.375, total= 4.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=100, subsample=1, score=-391399.625, total= 3.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:14:38.514 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=5, n_estimators=500, subsample=1, score=-335368.312, total=16.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:18:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.5, score=-355820.000, total= 9.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.5, score=-354799.828, total= 9.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:22:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.5, score=-344531.656, total=13.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.8, score=-343866.766, total=12.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:26:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.8, score=-349184.875, total=12.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=1, score=-347575.250, total= 6.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=1, score=-350246.688, total= 6.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:28:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=0.8, score=-349612.438, total=12.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:30:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=300, subsample=1, score=-349548.750, total=10.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:36:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.8, score=-329581.000, total=13.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:42:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.5, score=-345016.750, total=16.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:44:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.5, score=-335363.375, total=21.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=1 
+[I 00:46:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.5, score=-341209.438, total=22.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.8, score=-336324.938, total=20.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:50:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=0.8, score=-335959.438, total=18.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.5, score=-380373.812, total= 4.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.8 
+[I 00:54:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=1, score=-336785.438, total=11.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=1, score=-334101.000, total=14.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.5, score=-389795.375, total= 5.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:56:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.5, score=-387492.812, total= 3.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.8, score=-390963.188, total= 2.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 00:58:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=1, score=-381735.219, total= 3.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.5 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.8, score=-382927.750, total= 4.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=0.8, score=-385415.781, total= 4.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=1, score=-385383.469, total= 2.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=100, subsample=1, score=-388517.062, total= 2.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:00:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=10, n_estimators=500, subsample=1, score=-334857.875, total=16.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:04:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.8, score=-343302.031, total= 9.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.5, score=-353934.375, total=11.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:10:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.8, score=-354087.312, total=10.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.5, score=-344491.062, total=12.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.5, score=-351857.156, total=13.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:12:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=0.8, score=-345770.625, total=12.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.5 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=1, score=-344625.562, total= 6.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:16:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=1, score=-352904.125, total=10.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:20:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=300, subsample=1, score=-349157.500, total=10.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:22:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.5, score=-340805.562, total=16.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.8, score=-331553.688, total=13.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:30:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.5, score=-333163.469, total=21.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:34:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.8, score=-331485.844, total=16.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.5, score=-343563.875, total=22.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.5 
+[I 01:38:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=1, score=-337426.688, total=11.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=0.8, score=-339661.469, total=20.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.8 
+[I 01:40:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.5, score=-322989.812, total= 6.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:44:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=1, score=-330566.250, total=16.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.5, score=-324354.688, total= 6.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:46:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.5, score=-327630.188, total= 9.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:48:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.8, score=-315181.188, total= 8.1min
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.8, score=-319122.438, total= 5.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=1 
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=5, min_child_weight=25, n_estimators=500, subsample=1, score=-334119.438, total=17.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=1, score=-316188.719, total= 4.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.5 
+[I 01:50:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=0.8, score=-318129.719, total= 8.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=1, score=-318388.156, total= 6.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.8 
+[I 01:54:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, subsample=1, score=-317537.250, total= 6.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 01:56:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.5, score=-309673.375, total=18.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=1 
+[I 02:08:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.5, score=-307049.188, total=22.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 02:12:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.5, score=-309946.719, total=22.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.8, score=-299386.000, total=18.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 02:14:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.8, score=-298718.812, total=23.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.5 
+[I 02:16:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=0.8, score=-299212.156, total=23.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 02:18:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=1, score=-299573.656, total=12.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 02:22:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=1, score=-300139.125, total=15.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 02:28:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=300, subsample=1, score=-300392.438, total=19.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 02:32:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.8, score=-292666.062, total=24.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.5, score=-301911.875, total=32.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 02:46:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.8, score=-292677.500, total=31.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.5, score=-305748.250, total=43.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:00:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.5, score=-303239.000, total=43.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:02:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=1, score=-292578.812, total=20.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:06:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.5, score=-322103.125, total= 7.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:08:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=0.8, score=-295689.000, total=38.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.5, score=-328388.688, total= 9.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.8 
+[I 03:10:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.5, score=-324108.000, total= 6.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:12:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.8, score=-314506.875, total= 5.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:14:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=1, score=-313392.625, total= 4.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:16:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=1, score=-318527.125, total= 4.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.5 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.8, score=-320492.188, total= 8.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=1, score=-294922.875, total=32.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:18:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=0.8, score=-318245.500, total= 8.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=100, subsample=1, score=-314304.875, total= 4.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:20:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=500, subsample=1, score=-294306.938, total=28.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.8 
+[I 03:28:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.8, score=-301096.594, total=14.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.5, score=-311107.500, total=18.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:36:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.8, score=-299152.125, total=22.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=1 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.5, score=-307590.688, total=23.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:42:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.5, score=-309268.750, total=26.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:44:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=1, score=-295864.188, total=12.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:48:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=0.8, score=-300792.688, total=23.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:52:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=1, score=-297896.672, total=12.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:54:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=300, subsample=1, score=-298598.438, total=19.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 03:56:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.5, score=-306020.500, total=30.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:18:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.8, score=-296690.344, total=26.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=1 
+[I 04:20:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.5, score=-304145.031, total=42.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:24:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.5, score=-306410.344, total=41.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:26:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.8, score=-293699.375, total=37.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:30:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=0.8, score=-295038.500, total=36.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:34:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.5, score=-320049.281, total= 9.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:36:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=1, score=-290968.750, total=20.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:38:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.5, score=-326633.250, total= 9.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.5, score=-324529.188, total= 6.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:40:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.8, score=-320251.812, total= 5.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:42:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.8, score=-317118.750, total= 8.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=1, score=-313401.500, total= 4.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:44:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=1, score=-294462.125, total=25.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=1, score=-317903.500, total= 4.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:46:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=0.8, score=-316823.000, total= 8.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:48:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=100, subsample=1, score=-313421.688, total= 6.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:50:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=5, n_estimators=500, subsample=1, score=-291597.562, total=31.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 04:56:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.5, score=-311935.625, total=18.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:04:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.8, score=-301142.938, total=17.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=1 
+[I 05:06:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.5, score=-308177.312, total=23.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:08:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.8, score=-297856.594, total=22.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.5, score=-310295.062, total=23.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:10:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=0.8, score=-300744.000, total=19.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=1, score=-296749.688, total=12.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:16:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=1, score=-295618.828, total=13.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:20:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=300, subsample=1, score=-299746.250, total=19.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:26:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.8, score=-292750.312, total=24.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:40:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.8, score=-296542.844, total=24.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 05:44:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.5, score=-307513.000, total=42.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.5, score=-304263.938, total=43.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.5 
+[I 05:52:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.5, score=-308711.312, total=43.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=1, score=-290872.938, total=19.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:00:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.5, score=-321199.000, total= 9.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+  [I 06:02:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=1, score=-295220.750, total=19.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=0.8, score=-294596.000, total=38.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:04:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.5, score=-327024.375, total= 6.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:06:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.5, score=-329649.688, total= 9.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:08:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.8, score=-317215.844, total= 8.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.8, score=-317016.875, total= 5.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=0.8, score=-320095.875, total= 6.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.5 
+[I 06:10:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=1, score=-312609.000, total= 4.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:12:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=1, score=-318036.438, total= 6.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=100, subsample=1, score=-316027.562, total= 6.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:16:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=10, n_estimators=500, subsample=1, score=-291670.875, total=31.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:24:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.5, score=-307635.438, total=17.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.5, score=-315277.125, total=17.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=1 
+[I 06:28:38.510 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.5, score=-311199.125, total=25.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:36:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.8, score=-301045.312, total=23.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:38:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.8, score=-302321.500, total=22.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=1, score=-295325.344, total=12.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=1, score=-299319.375, total=12.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.8 
+[I 06:40:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=0.8, score=-301476.062, total=23.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.8 
+[I 06:46:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=300, subsample=1, score=-298572.750, total=19.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 06:56:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.8, score=-297871.875, total=28.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:10:38.510 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.5, score=-308547.125, total=35.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.8, score=-298384.000, total=27.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:14:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.5, score=-313547.188, total=34.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:16:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.5, score=-307366.531, total=41.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:20:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.5, score=-307518.062, total=12.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:28:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.5, score=-312485.688, total= 9.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=1, score=-290999.969, total=21.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:30:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=0.8, score=-299112.688, total=38.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:34:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.8, score=-299403.625, total= 8.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.8, score=-301962.000, total= 8.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:38:38.526 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.5, score=-311033.656, total=12.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:40:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=1, score=-296871.312, total= 6.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.5 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=1, score=-295761.750, total=31.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=10, min_child_weight=25, n_estimators=500, subsample=1, score=-293234.625, total=31.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=0.8, score=-298443.906, total=12.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:46:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=1, score=-298153.250, total= 6.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=100, subsample=1, score=-295295.688, total=10.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 07:48:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.8, score=-291771.938, total=28.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.8, score=-289862.750, total=28.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 08:16:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.5, score=-302120.688, total=32.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=1 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.5, score=-304389.625, total=32.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.8, score=-290464.375, total=31.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 08:18:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=0.5, score=-306606.688, total=36.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 08:22:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=1, score=-286565.688, total=17.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 08:34:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=1, score=-288947.000, total=27.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 08:44:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=300, subsample=1, score=-288140.688, total=29.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 08:46:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.8, score=-285807.375, total=36.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:10:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.5, score=-303944.406, total=55.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:14:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.5, score=-303291.812, total=57.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:20:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.5, score=-298965.438, total=64.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:22:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.8, score=-288906.812, total=46.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.5, score=-306967.750, total=10.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:32:38.515 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=0.8, score=-286255.125, total=56.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.8 
+[I 09:42:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.5, score=-313184.250, total=11.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.5, score=-312122.594, total=11.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:44:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=1, score=-282874.625, total=37.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:48:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=1, score=-295601.438, total= 6.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=1, score=-285004.938, total=39.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:54:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.8, score=-298831.500, total=12.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.8, score=-299974.938, total=12.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=0.8, score=-301183.938, total=12.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:56:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=1, n_estimators=500, subsample=1, score=-285297.688, total=38.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 09:58:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=1, score=-296941.719, total= 6.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:00:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=100, subsample=1, score=-298447.188, total=11.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:04:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.8, score=-289315.188, total=24.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:26:38.608 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.5, score=-305585.750, total=30.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:28:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.5, score=-300074.188, total=35.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.8, score=-291889.688, total=33.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:32:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.5, score=-307750.781, total=40.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=0.8, score=-292736.500, total=31.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:36:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=1, score=-290759.938, total=19.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:48:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=1, score=-288024.938, total=24.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=300, subsample=1, score=-286891.875, total=31.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 10:56:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.5, score=-300995.781, total=56.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:28:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.5, score=-305942.094, total=58.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:34:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.8, score=-289443.125, total=49.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:36:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.8, score=-290999.875, total=43.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:40:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.5, score=-306889.125, total=65.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:42:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.5, score=-308792.688, total= 9.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:50:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.5, score=-311752.250, total=10.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:52:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=0.8, score=-287084.094, total=58.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 11:54:38.514 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.5, score=-311080.000, total= 9.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.8, score=-302414.812, total= 8.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:00:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.8, score=-300070.688, total=11.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:06:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=1, score=-294743.688, total= 6.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=0.8, score=-301497.656, total= 9.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:08:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=1, score=-286546.969, total=45.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=1, score=-298976.000, total= 7.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=1, score=-286981.938, total=39.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:14:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=100, subsample=1, score=-296166.312, total= 8.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:16:38.506 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=5, n_estimators=500, subsample=1, score=-284929.812, total=48.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:26:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.8, score=-293070.750, total=22.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:38:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.5, score=-307601.219, total=26.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:40:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.5, score=-307154.312, total=32.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.5, score=-306182.000, total=38.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:46:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.8, score=-289837.312, total=34.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 12:50:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=0.8, score=-293983.625, total=34.1min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=1, score=-290855.250, total=18.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 13:00:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=1, score=-286529.250, total=28.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 13:06:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=300, subsample=1, score=-288149.062, total=21.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 13:08:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.5, score=-309063.219, total=51.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 13:42:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.8, score=-289870.000, total=38.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 13:44:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.5, score=-306930.688, total=62.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.5, score=-308932.500, total=51.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 13:50:38.526 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.8, score=-293648.250, total=53.3min
+[I 13:52:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=0.8, score=-293359.250, total=51.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:00:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.5, score=-309463.188, total=12.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.5, score=-314755.375, total=10.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:04:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.8, score=-303300.500, total= 8.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.8, score=-303487.875, total= 7.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.5, score=-311356.344, total=13.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:12:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=1, score=-296931.500, total= 7.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=1 
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=0.8, score=-302030.484, total= 7.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=1, score=-300168.062, total= 8.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:20:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=1, score=-284686.875, total=39.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=1, score=-288385.125, total=37.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:22:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=100, subsample=1, score=-300311.531, total=10.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=10, n_estimators=500, subsample=1, score=-286318.656, total=40.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:30:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.5, score=-310057.250, total=28.8min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:48:38.512 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.8, score=-296847.500, total=21.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.5, score=-310225.625, total=32.0min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:52:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.8, score=-297820.062, total=33.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 14:56:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.5, score=-309434.312, total=37.6min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.5 
+[I 14:58:38.508 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=0.8, score=-295276.375, total=34.3min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 15:04:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=1, score=-290589.438, total=17.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.8 
+[I 15:08:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=1, score=-289290.125, total=21.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 15:10:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=300, subsample=1, score=-290761.750, total=25.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 15:18:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.8, score=-296223.062, total=39.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 15:50:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.5, score=-311829.344, total=47.4min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.8, score=-295353.438, total=43.2min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=1 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 15:52:38.507 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.5, score=-311612.562, total=62.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=20, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 15:58:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.5, score=-312630.500, total=62.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=20, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 16:02:38.509 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+^A[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=15, min_child_weight=25, n_estimators=500, subsample=0.8, score=-295630.188, total=54.5min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=20, min_child_weight=1, n_estimators=100, subsample=0.5 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 16:12:38.546 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=20, min_child_weight=1, n_estimators=100, subsample=0.5, score=-312872.000, total=18.9min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=20, min_child_weight=1, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
+[I 16:16:38.525 NotebookApp] Saving file at /Documents/DATOS/2doCuatri/TP/Segunda_parte/XGBoost_v8_0.ipynb
+[CV]  colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=20, min_child_weight=1, n_estimators=100, subsample=0.5, score=-314711.969, total=17.7min
+[CV] colsample_bytree=0.5, gamma=0.5, learning_rate=0.1, max_depth=20, min_child_weight=1, n_estimators=100, subsample=0.8 
+/home/braianvillalba/.local/lib/python3.7/site-packages/xgboost/core.py:587: FutureWarning: Series.base is deprecated and will be removed in a future version
+  if getattr(data, 'base', None) is not None and \
